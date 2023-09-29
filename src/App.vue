@@ -1,30 +1,65 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
+  <h1>Birthday App</h1>
+
   <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+    <label for="dateInput">Select a Date:</label>
+    <input
+      id="dateInput"
+      type="date"
+      v-model="selectedDate"
+      @change="handleDateChange"
+      :max="getCurrentDate()"
+    />
+    <p>Selected Date: {{ selectedDate }}</p>
+    <p>Your Age:</p>
+    <p>
+      {{ calculatedAge.years || 0 }} years,
+      {{ calculatedAge.months || 0 }} months, {{ calculatedAge.days || 0 }} days
+    </p>
   </div>
-  <HelloWorld msg="Vite + Vue" />
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
-</style>
+<script setup>
+import { computed, ref } from 'vue';
+
+const selectedDate = ref('');
+
+const handleDateChange = () => {
+  console.log('Selected Date:', selectedDate.value);
+};
+
+const calculatedAge = computed(() => {
+  const birthDate = new Date(selectedDate.value);
+  const currentDate = new Date();
+  let years = currentDate.getFullYear() - birthDate.getFullYear();
+  let months = currentDate.getMonth() - birthDate.getMonth();
+  let days = currentDate.getDate() - birthDate.getDate();
+
+  if (days < 0) {
+    months -= 1;
+    days += new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      0
+    ).getDate();
+  }
+  if (months < 0) {
+    years -= 1;
+    months += 12;
+  }
+
+  return {
+    years,
+    months,
+    days
+  };
+});
+
+const getCurrentDate = () => {
+  const currentDate = new Date();
+  const year = currentDate.getFullYear();
+  const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+  const day = String(currentDate.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+</script>
