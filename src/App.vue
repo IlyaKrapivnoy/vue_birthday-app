@@ -11,7 +11,11 @@
       :max="getCurrentDate()"
     />
     <p>Selected Date: {{ selectedDate }}</p>
-    <p>Your Age: {{ calculatedAge || 0 }} years</p>
+    <p>Your Age:</p>
+    <p>
+      {{ calculatedAge.years || 0 }} years,
+      {{ calculatedAge.months || 0 }} months, {{ calculatedAge.days || 0 }} days
+    </p>
   </div>
 </template>
 
@@ -27,9 +31,28 @@ const handleDateChange = () => {
 const calculatedAge = computed(() => {
   const birthDate = new Date(selectedDate.value);
   const currentDate = new Date();
-  const ageInMilliseconds = currentDate - birthDate;
-  const ageInYears = ageInMilliseconds / (365 * 24 * 60 * 60 * 1000);
-  return Math.floor(ageInYears);
+  let years = currentDate.getFullYear() - birthDate.getFullYear();
+  let months = currentDate.getMonth() - birthDate.getMonth();
+  let days = currentDate.getDate() - birthDate.getDate();
+
+  if (days < 0) {
+    months -= 1;
+    days += new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      0
+    ).getDate();
+  }
+  if (months < 0) {
+    years -= 1;
+    months += 12;
+  }
+
+  return {
+    years,
+    months,
+    days
+  };
 });
 
 const getCurrentDate = () => {
