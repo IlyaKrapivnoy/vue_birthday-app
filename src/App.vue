@@ -21,17 +21,15 @@
     <p>Selected Time: {{ selectedTime }}</p>
     <p>Your Age:</p>
     <p>
-      {{ calculatedAge.years || 0 }} years,
-      {{ calculatedAge.months || 0 }} months,
-      {{ calculatedAge.days || 0 }} days, {{ calculatedAge.hours || 0 }} hours,
-      {{ calculatedAge.minutes || 0 }} minutes,
-      {{ calculatedAge.seconds || 0 }} seconds
+      {{ age.years.value || 0 }} years, {{ age.months.value || 0 }} months,
+      {{ age.days.value || 0 }} days, {{ age.hours.value || 0 }} hours,
+      {{ age.minutes.value || 0 }} minutes, {{ age.seconds.value || 0 }} seconds
     </p>
   </div>
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref, onMounted, onBeforeUnmount } from 'vue';
 
 const selectedDate = ref('');
 const selectedTime = ref('');
@@ -44,42 +42,59 @@ const handleTimeChange = () => {
   console.log('Selected Time:', selectedTime.value);
 };
 
-const calculatedAge = computed(() => {
-  const birthDate = new Date(
-    selectedDate.value + 'T' + selectedTime.value + ':00'
-  );
-  const currentDate = new Date();
-  const ageInMilliseconds = currentDate - birthDate;
+const age = {
+  years: ref(0),
+  months: ref(0),
+  days: ref(0),
+  hours: ref(0),
+  minutes: ref(0),
+  seconds: ref(0)
+};
 
-  const years = Math.floor(ageInMilliseconds / (365 * 24 * 60 * 60 * 1000));
-  const remainingMilliseconds = ageInMilliseconds % (365 * 24 * 60 * 60 * 1000);
+const updateAge = () => {
+  const timerInterval = setInterval(() => {
+    const birthDate = new Date(
+      selectedDate.value + 'T' + selectedTime.value + ':00'
+    );
+    const currentDate = new Date();
+    const ageInMilliseconds = currentDate - birthDate;
 
-  const months = Math.floor(remainingMilliseconds / (30 * 24 * 60 * 60 * 1000));
-  const remainingDaysMilliseconds =
-    remainingMilliseconds % (30 * 24 * 60 * 60 * 1000);
+    age.years.value = Math.floor(
+      ageInMilliseconds / (365 * 24 * 60 * 60 * 1000)
+    );
+    const remainingMilliseconds =
+      ageInMilliseconds % (365 * 24 * 60 * 60 * 1000);
 
-  const days = Math.floor(remainingDaysMilliseconds / (24 * 60 * 60 * 1000));
-  const remainingHoursMilliseconds =
-    remainingDaysMilliseconds % (24 * 60 * 60 * 1000);
+    age.months.value = Math.floor(
+      remainingMilliseconds / (30 * 24 * 60 * 60 * 1000)
+    );
+    const remainingDaysMilliseconds =
+      remainingMilliseconds % (30 * 24 * 60 * 60 * 1000);
 
-  const hours = Math.floor(remainingHoursMilliseconds / (60 * 60 * 1000));
-  const remainingMinutesMilliseconds =
-    remainingHoursMilliseconds % (60 * 60 * 1000);
+    age.days.value = Math.floor(
+      remainingDaysMilliseconds / (24 * 60 * 60 * 1000)
+    );
+    const remainingHoursMilliseconds =
+      remainingDaysMilliseconds % (24 * 60 * 60 * 1000);
 
-  const minutes = Math.floor(remainingMinutesMilliseconds / (60 * 1000));
-  const remainingSecondsMilliseconds =
-    remainingMinutesMilliseconds % (60 * 1000);
+    age.hours.value = Math.floor(remainingHoursMilliseconds / (60 * 60 * 1000));
+    const remainingMinutesMilliseconds =
+      remainingHoursMilliseconds % (60 * 60 * 1000);
 
-  const seconds = Math.floor(remainingSecondsMilliseconds / 1000);
+    age.minutes.value = Math.floor(remainingMinutesMilliseconds / (60 * 1000));
+    const remainingSecondsMilliseconds =
+      remainingMinutesMilliseconds % (60 * 1000);
 
-  return {
-    years,
-    months,
-    days,
-    hours,
-    minutes,
-    seconds
-  };
+    age.seconds.value = Math.floor(remainingSecondsMilliseconds / 1000);
+  }, 1000);
+
+  onBeforeUnmount(() => {
+    clearInterval(timerInterval);
+  });
+};
+
+onMounted(() => {
+  updateAge();
 });
 
 const getCurrentDate = () => {
