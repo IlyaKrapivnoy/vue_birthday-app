@@ -32,15 +32,17 @@
 <script setup>
 import { computed, ref, onMounted, onBeforeUnmount } from 'vue';
 
-const selectedDate = ref('');
-const selectedTime = ref('');
+const selectedDate = ref(localStorage.getItem('selectedDate') || '');
+const selectedTime = ref(localStorage.getItem('selectedTime') || '');
 const showAgeCalculation = ref(true);
 
 const handleDateChange = () => {
+  localStorage.setItem('selectedDate', selectedDate.value);
   console.log('Selected Date:', selectedDate.value);
 };
 
 const handleTimeChange = () => {
+  localStorage.setItem('selectedTime', selectedTime.value);
   console.log('Selected Time:', selectedTime.value);
 };
 
