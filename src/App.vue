@@ -1,5 +1,5 @@
 <template>
-  <h1>Birthday App</h1>
+  <h1 style="font-size: 100px">Birthday App</h1>
 
   <div>
     <label for="dateInput">Select a Date:</label>
@@ -11,48 +11,96 @@
       :max="getCurrentDate()"
     />
     <p>Selected Date: {{ selectedDate }}</p>
-    <p>Your Age:</p>
-    <p>
-      {{ calculatedAge.years || 0 }} years,
-      {{ calculatedAge.months || 0 }} months, {{ calculatedAge.days || 0 }} days
+    <label for="timeInput">Enter Time (HH:mm):</label>
+    <input
+      id="timeInput"
+      type="time"
+      v-model="selectedTime"
+      @input="handleTimeChange"
+    />
+    <p>Selected Time: {{ selectedTime }}</p>
+    <h2>Your Age:</h2>
+    <p v-if="showAgeCalculation">Calculating...</p>
+    <p v-else>
+      {{ age.years }} years, {{ age.months }} months, {{ age.days }} days,
+      {{ age.hours }} hours, {{ age.minutes }} minutes,
+      {{ age.seconds }} seconds
     </p>
   </div>
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref, onMounted, onBeforeUnmount } from 'vue';
 
-const selectedDate = ref('');
+const selectedDate = ref(localStorage.getItem('selectedDate') || '');
+const selectedTime = ref(localStorage.getItem('selectedTime') || '');
+const showAgeCalculation = ref(true);
 
 const handleDateChange = () => {
+  localStorage.setItem('selectedDate', selectedDate.value);
   console.log('Selected Date:', selectedDate.value);
 };
 
-const calculatedAge = computed(() => {
-  const birthDate = new Date(selectedDate.value);
-  const currentDate = new Date();
-  let years = currentDate.getFullYear() - birthDate.getFullYear();
-  let months = currentDate.getMonth() - birthDate.getMonth();
-  let days = currentDate.getDate() - birthDate.getDate();
+const handleTimeChange = () => {
+  localStorage.setItem('selectedTime', selectedTime.value);
+  console.log('Selected Time:', selectedTime.value);
+};
 
-  if (days < 0) {
-    months -= 1;
-    days += new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth(),
-      0
-    ).getDate();
-  }
-  if (months < 0) {
-    years -= 1;
-    months += 12;
-  }
+const age = {
+  years: ref(0),
+  months: ref(0),
+  days: ref(0),
+  hours: ref(0),
+  minutes: ref(0),
+  seconds: ref(0)
+};
 
-  return {
-    years,
-    months,
-    days
-  };
+const updateAge = () => {
+  const timerInterval = setInterval(() => {
+    const birthDate = new Date(
+      selectedDate.value + 'T' + selectedTime.value + ':00'
+    );
+    const currentDate = new Date();
+    const ageInMilliseconds = currentDate - birthDate;
+
+    age.years.value = Math.floor(
+      ageInMilliseconds / (365 * 24 * 60 * 60 * 1000)
+    );
+    const remainingMilliseconds =
+      ageInMilliseconds % (365 * 24 * 60 * 60 * 1000);
+
+    age.months.value = Math.floor(
+      remainingMilliseconds / (30 * 24 * 60 * 60 * 1000)
+    );
+    const remainingDaysMilliseconds =
+      remainingMilliseconds % (30 * 24 * 60 * 60 * 1000);
+
+    age.days.value = Math.floor(
+      remainingDaysMilliseconds / (24 * 60 * 60 * 1000)
+    );
+    const remainingHoursMilliseconds =
+      remainingDaysMilliseconds % (24 * 60 * 60 * 1000);
+
+    age.hours.value = Math.floor(remainingHoursMilliseconds / (60 * 60 * 1000));
+    const remainingMinutesMilliseconds =
+      remainingHoursMilliseconds % (60 * 60 * 1000);
+
+    age.minutes.value = Math.floor(remainingMinutesMilliseconds / (60 * 1000));
+    const remainingSecondsMilliseconds =
+      remainingMinutesMilliseconds % (60 * 1000);
+
+    age.seconds.value = Math.floor(remainingSecondsMilliseconds / 1000);
+
+    showAgeCalculation.value = false;
+  }, 1000);
+
+  onBeforeUnmount(() => {
+    clearInterval(timerInterval);
+  });
+};
+
+onMounted(() => {
+  updateAge();
 });
 
 const getCurrentDate = () => {
