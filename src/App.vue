@@ -1,5 +1,5 @@
 <template>
-  <h1>Birthday App</h1>
+  <h1 style="font-size: 100px">Birthday App</h1>
 
   <div>
     <label for="dateInput">Select a Date:</label>
@@ -21,7 +21,9 @@
     <p>Your Age:</p>
     <p>
       {{ calculatedAge.years || 0 }} years,
-      {{ calculatedAge.months || 0 }} months, {{ calculatedAge.days || 0 }} days
+      {{ calculatedAge.months || 0 }} months,
+      {{ calculatedAge.days || 0 }} days, {{ calculatedAge.hours || 0 }} hours,
+      {{ calculatedAge.minutes || 0 }} minutes
     </p>
   </div>
 </template>
@@ -41,29 +43,35 @@ const handleTimeChange = () => {
 };
 
 const calculatedAge = computed(() => {
-  const birthDate = new Date(selectedDate.value);
+  const birthDate = new Date(
+    selectedDate.value + 'T' + selectedTime.value + ':00'
+  );
   const currentDate = new Date();
-  let years = currentDate.getFullYear() - birthDate.getFullYear();
-  let months = currentDate.getMonth() - birthDate.getMonth();
-  let days = currentDate.getDate() - birthDate.getDate();
+  const ageInMilliseconds = currentDate - birthDate;
 
-  if (days < 0) {
-    months -= 1;
-    days += new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth(),
-      0
-    ).getDate();
-  }
-  if (months < 0) {
-    years -= 1;
-    months += 12;
-  }
+  const years = Math.floor(ageInMilliseconds / (365 * 24 * 60 * 60 * 1000));
+  const remainingMilliseconds = ageInMilliseconds % (365 * 24 * 60 * 60 * 1000);
+
+  const months = Math.floor(remainingMilliseconds / (30 * 24 * 60 * 60 * 1000));
+  const remainingDaysMilliseconds =
+    remainingMilliseconds % (30 * 24 * 60 * 60 * 1000);
+
+  const days = Math.floor(remainingDaysMilliseconds / (24 * 60 * 60 * 1000));
+  const remainingHoursMilliseconds =
+    remainingDaysMilliseconds % (24 * 60 * 60 * 1000);
+
+  const hours = Math.floor(remainingHoursMilliseconds / (60 * 60 * 1000));
+  const remainingMinutesMilliseconds =
+    remainingHoursMilliseconds % (60 * 60 * 1000);
+
+  const minutes = Math.floor(remainingMinutesMilliseconds / (60 * 1000));
 
   return {
     years,
     months,
-    days
+    days,
+    hours,
+    minutes
   };
 });
 
