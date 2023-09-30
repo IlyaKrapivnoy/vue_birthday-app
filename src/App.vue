@@ -18,12 +18,14 @@
       v-model="selectedTime"
       @input="handleTimeChange"
     />
+    <p>Selected Time: {{ selectedTime }}</p>
     <p>Your Age:</p>
     <p>
       {{ calculatedAge.years || 0 }} years,
       {{ calculatedAge.months || 0 }} months,
       {{ calculatedAge.days || 0 }} days, {{ calculatedAge.hours || 0 }} hours,
-      {{ calculatedAge.minutes || 0 }} minutes
+      {{ calculatedAge.minutes || 0 }} minutes,
+      {{ calculatedAge.seconds || 0 }} seconds
     </p>
   </div>
 </template>
@@ -65,13 +67,18 @@ const calculatedAge = computed(() => {
     remainingHoursMilliseconds % (60 * 60 * 1000);
 
   const minutes = Math.floor(remainingMinutesMilliseconds / (60 * 1000));
+  const remainingSecondsMilliseconds =
+    remainingMinutesMilliseconds % (60 * 1000);
+
+  const seconds = Math.floor(remainingSecondsMilliseconds / 1000);
 
   return {
     years,
     months,
     days,
     hours,
-    minutes
+    minutes,
+    seconds
   };
 });
 
