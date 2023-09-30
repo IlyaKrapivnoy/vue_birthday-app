@@ -11,6 +11,13 @@
       :max="getCurrentDate()"
     />
     <p>Selected Date: {{ selectedDate }}</p>
+    <label for="timeInput">Enter Time (HH:mm):</label>
+    <input
+      id="timeInput"
+      type="time"
+      v-model="selectedTime"
+      @input="handleTimeChange"
+    />
     <p>Your Age:</p>
     <p>
       {{ calculatedAge.years || 0 }} years,
@@ -23,9 +30,14 @@
 import { computed, ref } from 'vue';
 
 const selectedDate = ref('');
+const selectedTime = ref('');
 
 const handleDateChange = () => {
   console.log('Selected Date:', selectedDate.value);
+};
+
+const handleTimeChange = () => {
+  console.log('Selected Time:', selectedTime.value);
 };
 
 const calculatedAge = computed(() => {
