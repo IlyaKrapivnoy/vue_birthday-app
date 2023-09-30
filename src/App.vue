@@ -19,11 +19,12 @@
       @input="handleTimeChange"
     />
     <p>Selected Time: {{ selectedTime }}</p>
-    <p>Your Age:</p>
-    <p>
-      {{ age.years.value || 0 }} years, {{ age.months.value || 0 }} months,
-      {{ age.days.value || 0 }} days, {{ age.hours.value || 0 }} hours,
-      {{ age.minutes.value || 0 }} minutes, {{ age.seconds.value || 0 }} seconds
+    <h2>Your Age:</h2>
+    <p v-if="showAgeCalculation">Calculating...</p>
+    <p v-else>
+      {{ age.years }} years, {{ age.months }} months, {{ age.days }} days,
+      {{ age.hours }} hours, {{ age.minutes }} minutes,
+      {{ age.seconds }} seconds
     </p>
   </div>
 </template>
@@ -33,6 +34,7 @@ import { computed, ref, onMounted, onBeforeUnmount } from 'vue';
 
 const selectedDate = ref('');
 const selectedTime = ref('');
+const showAgeCalculation = ref(true);
 
 const handleDateChange = () => {
   console.log('Selected Date:', selectedDate.value);
@@ -86,6 +88,8 @@ const updateAge = () => {
       remainingMinutesMilliseconds % (60 * 1000);
 
     age.seconds.value = Math.floor(remainingSecondsMilliseconds / 1000);
+
+    showAgeCalculation.value = false;
   }, 1000);
 
   onBeforeUnmount(() => {
