@@ -1,36 +1,40 @@
 <template>
-  <h1 style="font-size: 100px">Birthday App</h1>
+  <div
+    class="h-screen bg-gray-800 flex flex-col justify-center items-center text-center"
+  >
+    <h1 class="text-[100px] font-bold uppercase">Birthday App</h1>
 
-  <div>
-    <label for="dateInput">Select a Date:</label>
-    <input
-      id="dateInput"
-      type="date"
-      v-model="selectedDate"
-      @change="handleDateChange"
-      :max="getCurrentDate()"
-    />
-    <p>Selected Date: {{ selectedDate }}</p>
-    <label for="timeInput">Enter Time (HH:mm):</label>
-    <input
-      id="timeInput"
-      type="time"
-      v-model="selectedTime"
-      @input="handleTimeChange"
-    />
-    <p>Selected Time: {{ selectedTime }}</p>
-    <h2 class="text-green-500">Your Age:</h2>
-    <p v-if="showAgeCalculation">Calculating...</p>
-    <p v-else>
-      {{ age.years }} years, {{ age.months }} months, {{ age.days }} days,
-      {{ age.hours }} hours, {{ age.minutes }} minutes,
-      {{ age.seconds }} seconds
-    </p>
+    <div>
+      <label for="dateInput">Select a Date:</label>
+      <input
+        id="dateInput"
+        type="date"
+        v-model="selectedDate"
+        @change="handleDateChange"
+        :max="getCurrentDate()"
+      />
+      <p>Selected Date: {{ selectedDate }}</p>
+      <label for="timeInput">Enter Time (HH:mm):</label>
+      <input
+        id="timeInput"
+        type="time"
+        v-model="selectedTime"
+        @input="handleTimeChange"
+      />
+      <p>Selected Time: {{ selectedTime }}</p>
+      <h2 class="text-green-500">Your Age:</h2>
+      <p v-if="showAgeCalculation">Calculating...</p>
+      <p v-else>
+        {{ age.years }} years, {{ age.months }} months, {{ age.days }} days,
+        {{ age.hours }} hours, {{ age.minutes }} minutes,
+        {{ age.seconds }} seconds
+      </p>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { computed, ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 
 const selectedDate = ref(localStorage.getItem('selectedDate') || '');
 const selectedTime = ref(localStorage.getItem('selectedTime') || '');
