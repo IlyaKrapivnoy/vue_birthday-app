@@ -19,7 +19,7 @@
       @input="handleTimeChange"
     />
     <p>Selected Time: {{ selectedTime }}</p>
-    <h2>Your Age:</h2>
+    <h2 class="text-green-500">Your Age:</h2>
     <p v-if="showAgeCalculation">Calculating...</p>
     <p v-else>
       {{ age.years }} years, {{ age.months }} months, {{ age.days }} days,
