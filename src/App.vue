@@ -24,7 +24,9 @@
 
         <div class="text-gray-300">
           Time for the next B-Day left:
-          <span class="text-gray-800 font-bold">xxx</span>
+          <span class="text-gray-800 font-bold">{{
+            timeUntilNextBirthday
+          }}</span>
         </div>
       </div>
 
@@ -44,7 +46,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
 
 const selectedDate = ref(localStorage.getItem('selectedDate') || '');
 const selectedTime = ref(localStorage.getItem('selectedTime') || '');
@@ -77,33 +79,22 @@ const updateAge = () => {
     const currentDate = new Date();
     const ageInMilliseconds = currentDate - birthDate;
 
-    age.years.value = Math.floor(
-      ageInMilliseconds / (365 * 24 * 60 * 60 * 1000)
-    );
-    const remainingMilliseconds =
-      ageInMilliseconds % (365 * 24 * 60 * 60 * 1000);
+    const ageDate = new Date(ageInMilliseconds);
 
-    age.months.value = Math.floor(
-      remainingMilliseconds / (30 * 24 * 60 * 60 * 1000)
-    );
-    const remainingDaysMilliseconds =
-      remainingMilliseconds % (30 * 24 * 60 * 60 * 1000);
+    const years = ageDate.getUTCFullYear() - 1970;
+    const months = ageDate.getUTCMonth();
+    const days = ageDate.getUTCDate() - 1;
 
-    age.days.value = Math.floor(
-      remainingDaysMilliseconds / (24 * 60 * 60 * 1000)
-    );
-    const remainingHoursMilliseconds =
-      remainingDaysMilliseconds % (24 * 60 * 60 * 1000);
+    const hours = currentDate.getHours();
+    const minutes = currentDate.getMinutes();
+    const seconds = currentDate.getSeconds();
 
-    age.hours.value = Math.floor(remainingHoursMilliseconds / (60 * 60 * 1000));
-    const remainingMinutesMilliseconds =
-      remainingHoursMilliseconds % (60 * 60 * 1000);
-
-    age.minutes.value = Math.floor(remainingMinutesMilliseconds / (60 * 1000));
-    const remainingSecondsMilliseconds =
-      remainingMinutesMilliseconds % (60 * 1000);
-
-    age.seconds.value = Math.floor(remainingSecondsMilliseconds / 1000);
+    age.years.value = years;
+    age.months.value = months;
+    age.days.value = days;
+    age.hours.value = hours;
+    age.minutes.value = minutes;
+    age.seconds.value = seconds;
 
     showAgeCalculation.value = false;
   }, 1000);
@@ -124,4 +115,30 @@ const getCurrentDate = () => {
   const day = String(currentDate.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
 };
+
+const timeUntilNextBirthday = computed(() => {
+  const today = new Date();
+  const selectedDateTime = new Date(
+    selectedDate.value + 'T' + selectedTime.value + ':00'
+  );
+  const nextBirthday = new Date(
+    today.getFullYear(),
+    selectedDateTime.getMonth(),
+    selectedDateTime.getDate()
+  );
+
+  if (nextBirthday < today) {
+    nextBirthday.setFullYear(nextBirthday.getFullYear() + 1);
+  }
+
+  const timeDifference = nextBirthday - today;
+  const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+  const hours = Math.floor(
+    (timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+  );
+  const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+
+  return `${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`;
+});
 </script>
