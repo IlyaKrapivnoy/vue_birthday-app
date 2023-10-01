@@ -1,33 +1,44 @@
 <template>
   <div
-    class="h-screen bg-gray-800 flex flex-col justify-center items-center text-center"
+    class="h-screen bg-gradient-to-r from-blue-500 to-green-500 flex flex-col justify-center items-center text-center"
   >
-    <h1 class="text-[100px] font-bold uppercase">Birthday App</h1>
+    <h1 class="text-[140px] font-bold uppercase">Birthday App</h1>
 
-    <div>
-      <div class="flex justify-center gap-2">
-        <input
-          id="dateInput"
-          type="date"
-          v-model="selectedDate"
-          @change="handleDateChange"
-          :max="getCurrentDate()"
-        />
+    <div class="w-4/6">
+      <div class="flex justify-between -mt-10">
+        <div class="flex justify-center gap-2">
+          <input
+            id="dateInput"
+            type="date"
+            v-model="selectedDate"
+            @change="handleDateChange"
+            :max="getCurrentDate()"
+          />
+          <input
+            id="timeInput"
+            type="time"
+            v-model="selectedTime"
+            @input="handleTimeChange"
+          />
+        </div>
 
-        <input
-          id="timeInput"
-          type="time"
-          v-model="selectedTime"
-          @input="handleTimeChange"
-        />
+        <div class="text-gray-300">
+          Time for the next B-Day left:
+          <span class="text-gray-800 font-bold">xxx</span>
+        </div>
       </div>
-      <h2 class="text-green-500">Your Age:</h2>
-      <p v-if="showAgeCalculation">Calculating...</p>
-      <p v-else>
-        {{ age.years }} years, {{ age.months }} months, {{ age.days }} days,
-        {{ age.hours }} hours, {{ age.minutes }} minutes,
-        {{ age.seconds }} seconds
-      </p>
+
+      <div class="mt-20">
+        <h2 class="text-gray-300">Your Current Age:</h2>
+        <p v-if="showAgeCalculation" class="text-3xl text-white">
+          Calculating<span class="animate-ping">...</span>
+        </p>
+        <p v-else class="text-3xl text-white">
+          {{ age.years }} years, {{ age.months }} months, {{ age.days }} days,
+          {{ age.hours }} hours, {{ age.minutes }} minutes,
+          {{ age.seconds }} seconds
+        </p>
+      </div>
     </div>
   </div>
 </template>
