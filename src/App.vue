@@ -5,23 +5,22 @@
     <h1 class="text-[100px] font-bold uppercase">Birthday App</h1>
 
     <div>
-      <label for="dateInput">Select a Date:</label>
-      <input
-        id="dateInput"
-        type="date"
-        v-model="selectedDate"
-        @change="handleDateChange"
-        :max="getCurrentDate()"
-      />
-      <p>Selected Date: {{ selectedDate }}</p>
-      <label for="timeInput">Enter Time (HH:mm):</label>
-      <input
-        id="timeInput"
-        type="time"
-        v-model="selectedTime"
-        @input="handleTimeChange"
-      />
-      <p>Selected Time: {{ selectedTime }}</p>
+      <div class="flex justify-center gap-2">
+        <input
+          id="dateInput"
+          type="date"
+          v-model="selectedDate"
+          @change="handleDateChange"
+          :max="getCurrentDate()"
+        />
+
+        <input
+          id="timeInput"
+          type="time"
+          v-model="selectedTime"
+          @input="handleTimeChange"
+        />
+      </div>
       <h2 class="text-green-500">Your Age:</h2>
       <p v-if="showAgeCalculation">Calculating...</p>
       <p v-else>
