@@ -31,7 +31,7 @@
             Happy B-Day!
           </div>
           <div v-else>
-            <span id="countdownDays">{{ countdownDays }}</span> days
+            <span id="livedTime">{{ livedTime }}</span> days
           </div>
         </div>
 
@@ -44,7 +44,7 @@
             Happy B-Day!
           </div>
           <div v-else>
-            <span id="countdownMilliseconds">{{ countdownMilliseconds }}</span>
+            <span id="livedMilliseconds">{{ livedMilliseconds }}</span>
             milliseconds
           </div>
         </div>
@@ -54,7 +54,7 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue';
+import { computed, ref, onMounted, onBeforeUnmount } from 'vue';
 
 const selectedDate = ref(localStorage.getItem('selectedDate') || '');
 const selectedTime = ref(localStorage.getItem('selectedTime') || '');
@@ -78,26 +78,45 @@ const age = {
   seconds: ref(0)
 };
 
-const countdownMilliseconds = computed(() => {
-  const today = new Date();
-  const selectedDateTime = new Date(
-    selectedDate.value + 'T' + selectedTime.value + ':00'
-  );
-  const nextBirthday = new Date(
-    today.getFullYear(),
-    selectedDateTime.getMonth(),
-    selectedDateTime.getDate()
-  );
+const livedMilliseconds = ref(0);
 
-  if (nextBirthday < today) {
-    nextBirthday.setFullYear(nextBirthday.getFullYear() + 1);
-  }
+const updateAge = () => {
+  const timerInterval = setInterval(() => {
+    const birthDate = new Date(
+      selectedDate.value + 'T' + selectedTime.value + ':00'
+    );
+    const currentDate = new Date();
 
-  return nextBirthday - today;
-});
+    const years = currentDate.getFullYear() - birthDate.getFullYear();
+    const months = currentDate.getMonth() - birthDate.getMonth();
+    const days = currentDate.getDate() - birthDate.getDate();
+    const hours = currentDate.getHours() - birthDate.getHours();
+    const minutes = currentDate.getMinutes() - birthDate.getMinutes();
+    const seconds = currentDate.getSeconds() - birthDate.getSeconds();
 
-watch(age, () => {
-  countdownMilliseconds.value = 0;
+    age.years.value = years;
+    age.months.value = months;
+    age.days.value = days;
+    age.hours.value = hours;
+    age.minutes.value = minutes;
+    age.seconds.value = seconds;
+
+    livedMilliseconds.value = currentDate - birthDate;
+
+    if (months === 0 && days === 0) {
+      livedMilliseconds.value = 'Happy B-Day!';
+    }
+
+    showAgeCalculation.value = false;
+  }, 1000);
+
+  onBeforeUnmount(() => {
+    clearInterval(timerInterval);
+  });
+};
+
+onMounted(() => {
+  updateAge();
 });
 
 const getCurrentDate = () => {
@@ -108,7 +127,7 @@ const getCurrentDate = () => {
   return `${year}-${month}-${day}`;
 };
 
-const countdownDays = computed(() => {
+const livedTime = computed(() => {
   const today = new Date();
   const selectedDateTime = new Date(
     selectedDate.value + 'T' + selectedTime.value + ':00'
@@ -124,6 +143,7 @@ const countdownDays = computed(() => {
   }
 
   const timeDifference = nextBirthday - today;
+
   return Math.floor(timeDifference / (1000 * 60 * 60 * 24));
 });
 </script>
