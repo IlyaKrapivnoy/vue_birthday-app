@@ -23,7 +23,7 @@
         </div>
 
         <div class="text-gray-300">
-          Time for the next B-Day left:
+          Time until your next birthday:
           <span class="text-gray-800 font-bold">{{
             timeUntilNextBirthday
           }}</span>
@@ -117,6 +117,10 @@ const getCurrentDate = () => {
 };
 
 const timeUntilNextBirthday = computed(() => {
+  if (age.months.value === 0 && age.days.value === 0) {
+    return 'Happy B-Day!';
+  }
+
   const today = new Date();
   const selectedDateTime = new Date(
     selectedDate.value + 'T' + selectedTime.value + ':00'
