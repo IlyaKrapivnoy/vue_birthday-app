@@ -21,7 +21,9 @@
           />
         </div>
         <div class="text-gray-300">
-          You have lived: {{ livedMilliseconds }} milliseconds
+          You have lived:
+          <span>{{ livedMilliseconds || 0 }}</span>
+          milliseconds
         </div>
       </div>
     </div>
