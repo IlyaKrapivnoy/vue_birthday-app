@@ -2,25 +2,27 @@
   <div
     class="h-screen bg-gradient-to-r from-blue-500 to-green-500 flex flex-col justify-center items-center text-center"
   >
-    <h1 class="text-[140px] font-bold uppercase">Birthday App</h1>
+    <div class="flex justify-center gap-2">
+      <input
+        id="dateInput"
+        type="date"
+        v-model="selectedDate"
+        @change="handleDateChange"
+        :max="getCurrentDate()"
+      />
+      <input
+        id="timeInput"
+        type="time"
+        v-model="selectedTime"
+        @input="handleTimeChange"
+      />
+    </div>
+    <h1 class="text-[140px] font-bold uppercase leading-[110px]">
+      Birthday App
+    </h1>
     <div class="w-4/6">
-      <div class="flex justify-between -mt-10">
-        <div class="flex justify-center gap-2">
-          <input
-            id="dateInput"
-            type="date"
-            v-model="selectedDate"
-            @change="handleDateChange"
-            :max="getCurrentDate()"
-          />
-          <input
-            id="timeInput"
-            type="time"
-            v-model="selectedTime"
-            @input="handleTimeChange"
-          />
-        </div>
-        <div class="text-gray-300">
+      <div class="flex justify-between">
+        <div class="text-gray-900">
           You have lived:
           <span>{{ livedMilliseconds || 0 }}</span>
           milliseconds
