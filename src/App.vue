@@ -26,9 +26,11 @@
     </div>
 
     <div class="text-[#FF6123]">
-      <h1 class="text-[120px]">You have lived:</h1>
+      <h1 class="font-bold text-[46px] sm:text-[80px] md:text-[110px]">
+        You have lived:
+      </h1>
 
-      <h3 class="text-[70px] text-yellow-100">
+      <h3 class="text-[30px] sm:text-[50px] md:text-[70px] text-yellow-100">
         {{ formattedLivedMillisecondsMessage }}
       </h3>
 
