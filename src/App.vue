@@ -1,6 +1,6 @@
 <template>
   <div
-    class="h-screen bg-black flex flex-col justify-center items-center text-center"
+    class="h-screen bg-[#191B1D] flex flex-col justify-center items-center text-center"
   >
     <div class="flex w-2/4 justify-between">
       <label for="birthdate" class="text-white">Enter your birthdate:</label>
@@ -25,7 +25,7 @@
       </div>
     </div>
 
-    <div class="text-white">
+    <div class="text-[#FF6123]">
       <h1 class="text-[120px]">You have lived:</h1>
 
       <h3 class="text-[70px] text-yellow-100">
