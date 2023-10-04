@@ -1,68 +1,48 @@
 <template>
   <div
-    class="h-screen bg-gradient-to-r from-blue-500 to-green-500 flex flex-col justify-center items-center text-center"
+    class="h-screen bg-black flex flex-col justify-center items-center text-center"
   >
-    <h1 class="text-[140px] font-bold uppercase">Birthday App</h1>
-    <div class="w-4/6">
-      <div class="flex justify-between -mt-10">
-        <div class="flex justify-center gap-2">
+    <div class="flex w-2/4 justify-between">
+      <label for="birthdate" class="text-white">Enter your birthdate:</label>
+      <div>
+        <button
+          v-if="!showInputs"
+          @click="showInputs = true"
+          class="text-white"
+        >
+          Edit
+        </button>
+        <div v-else>
           <input
-            id="dateInput"
+            id="birthdate"
             type="date"
-            v-model="selectedDate"
-            @change="handleDateChange"
+            v-model="birthdate"
             :max="getCurrentDate()"
           />
-          <input
-            id="timeInput"
-            type="time"
-            v-model="selectedTime"
-            @input="handleTimeChange"
-          />
-        </div>
-        <div class="text-gray-300">
-          You have lived:
-          <span>{{ livedMilliseconds || 0 }}</span>
-          milliseconds
+          <input type="time" v-model="birthtime" />
+          <button @click="resetForm" class="text-white ml-2">Reset</button>
         </div>
       </div>
+    </div>
+
+    <div class="text-white">
+      <h1 class="text-[120px]">You have lived:</h1>
+
+      <h3 class="text-[70px] text-yellow-100">
+        {{ formattedLivedMillisecondsMessage }}
+      </h3>
+
+      <h3 v-if="showMessage"></h3>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue';
 
-const selectedDate = ref(localStorage.getItem('selectedDate') || '');
-const selectedTime = ref(localStorage.getItem('selectedTime') || '');
-
-const handleDateChange = () => {
-  localStorage.setItem('selectedDate', selectedDate.value);
-};
-
-const handleTimeChange = () => {
-  localStorage.setItem('selectedTime', selectedTime.value);
-};
-
-const livedMilliseconds = ref(0);
-
-const updateAge = () => {
-  const timerInterval = setInterval(() => {
-    const birthDate = new Date(
-      selectedDate.value + 'T' + selectedTime.value + ':00'
-    );
-    const currentDate = new Date();
-    livedMilliseconds.value = currentDate - birthDate;
-  }, 1000);
-
-  onBeforeUnmount(() => {
-    clearInterval(timerInterval);
-  });
-};
-
-onMounted(() => {
-  updateAge();
-});
+const birthdate = ref(localStorage.getItem('birthdate') || '');
+const birthtime = ref(localStorage.getItem('birthtime') || '');
+const showInputs = ref(false);
 
 const getCurrentDate = () => {
   const currentDate = new Date();
@@ -71,4 +51,62 @@ const getCurrentDate = () => {
   const day = String(currentDate.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
 };
+
+const birthDateTime = computed(() => {
+  return new Date(`${birthdate.value}T${birthtime.value}:00`).getTime();
+});
+
+const livedMilliseconds = ref(0);
+
+const showMessage = computed(() => {
+  return !birthdate.value || !birthtime.value;
+});
+
+const livedMillisecondsMessage = computed(() => {
+  return showMessage.value
+    ? 'Select date and time of your B-Day'
+    : livedMilliseconds.value.toString();
+});
+
+const formattedLivedMillisecondsMessage = computed(() => {
+  if (showMessage.value) return livedMillisecondsMessage.value;
+
+  const message = livedMillisecondsMessage.value;
+  const parts = [];
+  for (let i = message.length; i > 0; i -= 3) {
+    parts.unshift(message.slice(Math.max(0, i - 3), i));
+  }
+
+  return parts.join('.');
+});
+
+const updateLivedMilliseconds = () => {
+  const currentDateTime = new Date().getTime();
+  livedMilliseconds.value = showMessage.value
+    ? 0
+    : currentDateTime - birthDateTime.value;
+};
+
+const resetForm = () => {
+  birthdate.value = '';
+  birthtime.value = '';
+  livedMilliseconds.value = 0;
+  showInputs.value = false;
+};
+
+watch([birthdate, birthtime], () => {
+  localStorage.setItem('birthdate', birthdate.value);
+  localStorage.setItem('birthtime', birthtime.value);
+});
+
+let timerInterval;
+
+onMounted(() => {
+  updateLivedMilliseconds();
+  timerInterval = setInterval(updateLivedMilliseconds, 1);
+});
+
+onBeforeUnmount(() => {
+  clearInterval(timerInterval);
+});
 </script>
