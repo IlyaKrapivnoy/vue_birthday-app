@@ -5,14 +5,23 @@
     <div class="flex w-2/4 justify-between">
       <label for="birthdate" class="text-white">Enter your birthdate:</label>
       <div>
-        <input
-          id="birthdate"
-          type="date"
-          v-model="birthdate"
-          :max="getCurrentDate()"
-        />
-        <input type="time" v-model="birthtime" />
-        <button @click="resetForm" class="text-white ml-2">Reset</button>
+        <button
+          v-if="!showInputs"
+          @click="showInputs = true"
+          class="text-white"
+        >
+          Edit
+        </button>
+        <div v-else>
+          <input
+            id="birthdate"
+            type="date"
+            v-model="birthdate"
+            :max="getCurrentDate()"
+          />
+          <input type="time" v-model="birthtime" />
+          <button @click="resetForm" class="text-white ml-2">Reset</button>
+        </div>
       </div>
     </div>
 
@@ -33,6 +42,7 @@ import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue';
 
 const birthdate = ref(localStorage.getItem('birthdate') || '');
 const birthtime = ref(localStorage.getItem('birthtime') || '');
+const showInputs = ref(false);
 
 const getCurrentDate = () => {
   const currentDate = new Date();
@@ -81,6 +91,7 @@ const resetForm = () => {
   birthdate.value = '';
   birthtime.value = '';
   livedMilliseconds.value = 0;
+  showInputs.value = false;
 };
 
 watch([birthdate, birthtime], () => {
