@@ -73,8 +73,8 @@ const formattedLivedMillisecondsMessage = computed(() => {
 
   const message = livedMillisecondsMessage.value;
   const parts = [];
-  for (let i = 0; i < message.length; i += 3) {
-    parts.push(message.slice(i, i + 3));
+  for (let i = message.length; i > 0; i -= 3) {
+    parts.unshift(message.slice(Math.max(0, i - 3), i));
   }
 
   return parts.join('.');
