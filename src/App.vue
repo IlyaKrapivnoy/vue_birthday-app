@@ -12,6 +12,7 @@
           :max="getCurrentDate()"
         />
         <input type="time" v-model="birthtime" />
+        <button @click="resetForm" class="text-white ml-2">Reset</button>
       </div>
     </div>
 
@@ -60,6 +61,12 @@ const updateLivedMilliseconds = () => {
   livedMilliseconds.value = showMessage.value
     ? 0
     : currentDateTime - birthDateTime.value;
+};
+
+const resetForm = () => {
+  birthdate.value = '';
+  birthtime.value = '';
+  livedMilliseconds.value = 0;
 };
 
 watch([birthdate, birthtime], () => {
