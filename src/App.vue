@@ -19,7 +19,9 @@
     <div class="text-white">
       <h1 class="text-[120px]">You have lived:</h1>
 
-      <h3>{{ livedMillisecondsMessage }}</h3>
+      <h3 class="text-[70px] text-yellow-100">
+        {{ formattedLivedMillisecondsMessage }}
+      </h3>
 
       <h3 v-if="showMessage"></h3>
     </div>
@@ -53,7 +55,19 @@ const showMessage = computed(() => {
 const livedMillisecondsMessage = computed(() => {
   return showMessage.value
     ? 'Select date and time of your B-Day'
-    : livedMilliseconds.value;
+    : livedMilliseconds.value.toString();
+});
+
+const formattedLivedMillisecondsMessage = computed(() => {
+  if (showMessage.value) return livedMillisecondsMessage.value;
+
+  const message = livedMillisecondsMessage.value;
+  const parts = [];
+  for (let i = 0; i < message.length; i += 3) {
+    parts.push(message.slice(i, i + 3));
+  }
+
+  return parts.join('.');
 });
 
 const updateLivedMilliseconds = () => {
