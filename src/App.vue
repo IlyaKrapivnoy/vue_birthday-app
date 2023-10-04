@@ -4,7 +4,7 @@
   >
     <div class="flex w-2/4 justify-between">
       <label for="birthdate" class="text-white">Enter your birthdate:</label>
-      <div>
+      <div class="h-[30px]">
         <button
           v-if="!showInputs"
           @click="showInputs = true"
