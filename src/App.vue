@@ -2,26 +2,25 @@
   <div
     class="h-screen bg-[#191B1D] flex flex-col justify-center items-center text-center"
   >
-    <div class="flex w-2/4 justify-between">
-      <label for="birthdate" class="text-white">Enter your birthdate:</label>
-      <div class="h-[30px]">
-        <button
-          v-if="!showInputs"
-          @click="showInputs = true"
-          class="text-white"
-        >
-          Edit
+    <div class="flex flex-col h-[30px] justify-between">
+      <button
+        v-if="!showInputs"
+        @click="showInputs = true"
+        class="text-white underline"
+      >
+        Edit
+      </button>
+      <div v-else>
+        <input
+          id="birthdate"
+          type="date"
+          v-model="birthdate"
+          :max="getCurrentDate()"
+        />
+        <input type="time" v-model="birthtime" />
+        <button @click="resetForm" class="text-white ml-2 underline">
+          Reset
         </button>
-        <div v-else>
-          <input
-            id="birthdate"
-            type="date"
-            v-model="birthdate"
-            :max="getCurrentDate()"
-          />
-          <input type="time" v-model="birthtime" />
-          <button @click="resetForm" class="text-white ml-2">Reset</button>
-        </div>
       </div>
     </div>
 
