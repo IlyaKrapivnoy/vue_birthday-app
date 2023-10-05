@@ -1,34 +1,35 @@
 <template>
   <div
-    class="h-screen bg-black flex flex-col justify-center items-center text-center"
+    class="h-screen bg-[#191B1D] flex flex-col justify-center items-center text-center"
   >
-    <div class="flex w-2/4 justify-between">
-      <label for="birthdate" class="text-white">Enter your birthdate:</label>
-      <div>
-        <button
-          v-if="!showInputs"
-          @click="showInputs = true"
-          class="text-white"
-        >
-          Edit
+    <div class="flex flex-col h-[30px] justify-between">
+      <button
+        v-if="!showInputs"
+        @click="showInputs = true"
+        class="text-white underline"
+      >
+        Edit
+      </button>
+      <div v-else>
+        <input
+          id="birthdate"
+          type="date"
+          v-model="birthdate"
+          :max="getCurrentDate()"
+        />
+        <input type="time" v-model="birthtime" />
+        <button @click="resetForm" class="text-white ml-2 underline">
+          Reset
         </button>
-        <div v-else>
-          <input
-            id="birthdate"
-            type="date"
-            v-model="birthdate"
-            :max="getCurrentDate()"
-          />
-          <input type="time" v-model="birthtime" />
-          <button @click="resetForm" class="text-white ml-2">Reset</button>
-        </div>
       </div>
     </div>
 
-    <div class="text-white">
-      <h1 class="text-[120px]">You have lived:</h1>
+    <div class="text-[#FF6123]">
+      <h1 class="font-bold text-[46px] sm:text-[80px] md:text-[110px]">
+        You have lived:
+      </h1>
 
-      <h3 class="text-[70px] text-yellow-100">
+      <h3 class="text-[30px] sm:text-[50px] md:text-[70px] text-yellow-100">
         {{ formattedLivedMillisecondsMessage }}
       </h3>
 
